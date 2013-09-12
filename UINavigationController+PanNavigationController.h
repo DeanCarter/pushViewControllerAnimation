@@ -12,9 +12,10 @@
 
 @property(strong, nonatomic)NSMutableArray *screenShots;
 
-- (id)initWithRootViewControllerAddGesture:(UIViewController *)rootViewController;
+- (id)initWithRootViewController:(UIViewController *)rootViewController addPanGesture:(BOOL)gesture;
 - (void)pushViewController:(UIViewController *)viewController effect:(BOOL)effect;
 - (void)popViewControllerWithEffect:(BOOL)effect;
 
 @end
+
 
