@@ -27,27 +27,28 @@ static const void *ScreenShots = &ScreenShots;
 
 @implementation UINavigationController (PanNavigationController)
 
+- (id)initWithRootViewController:(UIViewController *)rootViewController
+                   addPanGesture:(BOOL)gesture{
+    self = [self initWithRootViewController:rootViewController];
+    if (self) {
+        self.screenShots = [[NSMutableArray alloc] init];
+        if (gesture) {
+            UIPanGestureRecognizer *panGestureRecognizer =
+            [[UIPanGestureRecognizer alloc] initWithTarget:self
+                                                    action:@selector(handlePanGesture:)];
+            panGestureRecognizer.maximumNumberOfTouches = 1;
+            [self.view addGestureRecognizer:panGestureRecognizer];
+        }
+    }
+    return self;
+}
+
 - (NSMutableArray *)screenShots{
     return objc_getAssociatedObject(self, ScreenShots);
 }
 
 - (void)setScreenShots:(NSMutableArray *)screenShots{
     objc_setAssociatedObject(self, ScreenShots, screenShots, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-
-
-- (id)initWithRootViewControllerAddGesture:(UIViewController *)rootViewController{
-    self = [self initWithRootViewController:rootViewController];
-    if (self) {
-        self.screenShots = [[NSMutableArray alloc] init];
-        UIPanGestureRecognizer *panGestureRecognizer =
-        [[UIPanGestureRecognizer alloc] initWithTarget:self
-                                                action:@selector(handlePanGesture:)];
-        panGestureRecognizer.maximumNumberOfTouches = 1;
-        [self.view addGestureRecognizer:panGestureRecognizer];
-    }
-    return self;
 }
 
 - (void)handlePanGesture:(UIPanGestureRecognizer *)panGestureRecognizer{
@@ -131,6 +132,14 @@ static const void *ScreenShots = &ScreenShots;
 
 - (void)popViewControllerWithEffect:(BOOL)effect{
     UIView *prevPageView = [KEYWINDOW viewWithTag:PREVPAGE_TAG];
+    if (!prevPageView) {
+        prevPageView = [self.screenShots lastObject];
+        if (effect) {
+            prevPageView.alpha = PREVPAGE_ALPHA;
+            [prevPageView setTransform:CGAffineTransformMakeScale(PREVPAGE_SCALE, PREVPAGE_SCALE)];
+        }
+        [KEYWINDOW insertSubview:prevPageView atIndex:0];
+    }
     [UIView animateWithDuration:ANIMATE_DURATION
                           delay:0
                         options:UIViewAnimationOptionCurveEaseInOut
