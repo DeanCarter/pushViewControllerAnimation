@@ -10,7 +10,11 @@
 
 @interface UINavigationController (PanNavigationController)
 
-- (void)pushViewController:(UIViewController *)viewController withEffect:(BOOL)needEffect;
-- (void)popViewController;
+@property(strong, nonatomic)NSMutableArray *screenShots;
+
+- (id)initWithRootViewControllerAddGesture:(UIViewController *)rootViewController;
+- (void)pushViewController:(UIViewController *)viewController effect:(BOOL)effect;
+- (void)popViewControllerWithEffect:(BOOL)effect;
 
 @end
+
